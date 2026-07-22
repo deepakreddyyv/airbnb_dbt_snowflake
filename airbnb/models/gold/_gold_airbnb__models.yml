@@ -1,0 +1,189 @@
+models:
+  - name: metricflow_time_spine
+    description: A time spine with one row per day.
+    time_spine:
+      standard_granularity_column: date_day
+    columns:
+      - name: date_day
+        granularity: day
+
+  
+  - name: dim_hosts
+    description: "dim hosts, has descriptive info about the hosts"
+    semantic_model:
+      enabled: true
+      name: hosts
+    
+    agg_time_dimension: updated_at
+    
+    columns:
+      - name: HOST_ID
+        entity:
+          type: primary
+          name: HOST_ID
+    
+      - name: HOST_NAME
+        dimension:
+          type: categorical
+      
+      - name: IS_SUPERHOST
+        dimension:
+          type: categorical
+      
+      - name: UPDATED_AT
+        data_type: TIMESTAMP_NTZ(9)
+        granularity: day
+        dimension:
+          type: time
+      
+    metrics:
+      - name: super_host_count
+        label: super host count
+        description: Total number of super hosts.
+        type: simple
+        agg: sum_boolean
+        expr: is_superhost
+
+  - name: fct_reviews
+    description: "{{ doc('fct_reviews') }}"
+    semantic_model:
+      enabled: true
+      name: reviews
+    
+    agg_time_dimension: created_at
+
+    config:
+      on_schema_change: 'fail'
+      contract:
+        enforced: true
+    columns:
+      - name: ID
+        data_type: VARCHAR(16777216)
+        entity:
+          type: primary
+          name: id
+      - name: LISTING_ID
+        data_type: NUMBER(38,0)
+        entity:
+          type: foreign
+          name: listing_id
+      - name: HOST_ID
+        data_type: NUMBER(38,0)
+        entity:
+          type: foreign
+          name: host_id
+      - name: NAME
+        data_type: VARCHAR(16777216)
+      - name: ROOM_TYPE
+        data_type: VARCHAR(16777216)
+        dimension:
+          type: categorical
+      - name: MINIMUM_NIGHTS
+        data_type: NUMBER(38,0)
+      - name: PRICE
+        data_type: FLOAT
+      - name: IS_SUPERHOST
+        data_type: BOOLEAN
+        dimension:
+          type: categorical
+      - name: REVIEWS_COUNT
+        data_type: NUMBER(18,0)
+      - name: SENTIMENT_SCORE
+        data_type: NUMBER(13,0)
+      - name: SENTIMENT_SCORE_NORMALIZED
+        data_type: NUMBER(20,6)
+      - name: CREATED_AT
+        data_type: TIMESTAMP_NTZ(9)
+        granularity: day
+        dimension:
+          type: time
+      - name: UPDATED_AT
+        data_type: TIMESTAMP_NTZ(9)
+        granularity: day
+        dimension:
+          type: time
+      - name: START_DATE
+        data_type: TIMESTAMP_NTZ(9)
+      - name: END_DATE
+        data_type: TIMESTAMP_NTZ(9)
+
+    metrics:
+      - name: listing_count
+        label: Listing Count
+        description: Total number of currently active listings.
+        type: simple
+        agg: count
+        expr: listing_id
+
+      - name: total_reviews
+        label: Total Reviews
+        description: Total number of reviews received across all listings.
+        type: simple
+        agg: sum
+        expr: reviews_count
+
+      - name: average_price
+        label: Average Listing Price
+        description: Average nightly price across listings.
+        type: simple
+        agg: average
+        expr: price
+
+      - name: average_minimum_nights
+        label: Average Minimum Nights
+        description: Average minimum-nights requirement across listings.
+        type: simple
+        agg: average
+        expr: minimum_nights
+
+      - name: average_sentiment_score
+        label: Average Sentiment Score
+        description: Average of the listing-level summed sentiment score across listings.
+        type: simple
+        agg: average
+        expr: sentiment_score
+
+      - name: average_sentiment_score_normalized
+        label: Average Normalized Sentiment Score
+        description: Average min-max normalized sentiment score (0-1) across listings.
+        type: simple
+        agg: average
+        expr: sentiment_score_normalized
+
+      - name: superhost_listing_count
+        label: Superhost Listing Count
+        description: Number of listings hosted by a superhost.
+        type: simple
+        agg: sum_boolean
+        expr: is_superhost
+
+      - name: superhost_rate
+        label: Superhost Rate
+        description: Share of listings hosted by a superhost.
+        type: ratio
+        numerator: superhost_listing_count
+        denominator: listing_count
+
+      - name: reviews_per_listing
+        label: Reviews per Listing
+        description: Average number of reviews per listing.
+        type: ratio
+        numerator: total_reviews
+        denominator: listing_count
+
+  - name: dim_listings
+
+    versions:
+      - v: 1
+        defined_in: dim_listings
+        deprecation_date: 2025-12-31
+        config:
+          enabled: false
+      
+      - v: 2
+        columns:
+          - include: '*'
+          - name: SENTIMENT_SCORE_NORMALIZED
+            data_type: NUMBER(20,6)
+    
+    latest_version: 2

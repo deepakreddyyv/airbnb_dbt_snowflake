@@ -1,0 +1,28 @@
+snapshots:
+  - name: silver_airbnb__hosts_ss
+    relation: ref('silver_airbnb__hosts_base')
+    config:
+      schema: silver
+      alias: silver_airbnb__hosts
+      unique_key: HOST_ID
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: "to_date('9999-12-31')"
+      hard_deletes: 'invalidate'
+      snapshot_meta_column_names:
+        dbt_valid_from: start_date
+        dbt_valid_to: end_date
+  
+  - name: silver_airbnb__listings_ss
+    relation: ref('silver_airbnb__listings_base')
+    config:
+      schema: silver
+      alias: silver_airbnb__listings
+      unique_key: LISTING_ID
+      strategy: timestamp
+      updated_at: updated_at
+      dbt_valid_to_current: "to_date('9999-12-31')"
+      hard_deletes: 'invalidate'
+      snapshot_meta_column_names:
+        dbt_valid_from: start_date
+        dbt_valid_to: end_date

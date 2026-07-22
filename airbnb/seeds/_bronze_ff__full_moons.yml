@@ -1,0 +1,5 @@
+seeds:
+  - name: full_moons
+    config:
+      schema: bronze
+      alias: bronze_ff__full_moons

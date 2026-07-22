@@ -1,0 +1,49 @@
+models:
+  - name: bronze_airbnb__hosts
+    deprecation_date: 2025-12-31
+    columns:
+      - name: id
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+  
+  - name: bronze_airbnb__listings
+    columns:
+      - name: id
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: host_id
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: price
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+    
+          - positive_number:
+              arguments:
+                delimeter: '$'
+              config:
+                severity: warn
+      
+      - name: room_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Entire home/apt', 'Private room', 'Shared room', 'Hotel room']
+              config:
+                  severity: warn
+
+  - name: bronze_airbnb__reviews
+    columns:
+      - name: listing_id
+        data_tests:
+        - not_null:
+            config:
+              severity: warn

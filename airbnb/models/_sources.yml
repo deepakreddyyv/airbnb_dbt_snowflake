@@ -1,0 +1,44 @@
+sources:
+  - name: airbnb
+    database: AIRBNB
+    schema: RAW
+    config:
+      enabled: true
+      meta:
+        owner: "Deepak Reddy"
+        description: "Source for Airbnb data in the RAW schema"
+      freshness:
+        filter: ""
+        warn_after: {count: 2, period: day}
+        error_after: {count: 10000, period: day}
+      loaded_at_field: updated_at
+      event_time: created_at
+    tables:
+      - name: src_hosts
+        identifier: raw_hosts   
+      - name: src_listings
+        identifier: raw_listings
+      - name: src_reviews
+        identifier: raw_reviews
+        config:
+          freshness: null
+
+# sources:
+  # - name: [<source-name>]
+    # database: <database-name>
+    # schema: <schema-name>
+    # config:
+      # enabled: true | false
+      # event_time: my_time_field
+      # meta: {<dictionary>}
+      # freshness:
+        # warn_after:  
+          # count: <positive_integer>
+          # period: minute | hour | day
+# 
+    # tables:
+      # - name: [<source-table-name>]
+        # config:
+          # enabled: true | false
+          # event_time: my_time_field
+          # meta: {<dictionary>}

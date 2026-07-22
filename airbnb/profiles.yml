@@ -1,0 +1,14 @@
+airbnb:
+  outputs:
+    dev:
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      database: AIRBNB
+      private_key_passphrase: '1492'
+      private_key_path: /Users/deepak.reddy/programs/airbnb-analytics/secrets/rsa_key.p8
+      role: TRANSFORM
+      schema: RAW
+      threads: 1
+      type: snowflake
+      user: dbt
+      warehouse: COMPUTE_WH
+  target: dev
