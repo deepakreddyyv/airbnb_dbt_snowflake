@@ -1,0 +1,1 @@
+![Architecture diagram](assets/dbt-dag.png)
